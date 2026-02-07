@@ -3,41 +3,1026 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Torre do Alquimista - To-Do List</title>
-    <!-- Link para fonte antiga via Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <title>Torre do Alquimista - Lista de Tarefas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Uncial+Antiqua&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ==================== RESET & VARIÁVEIS ==================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Cores medievais alquímicas */
+            --stone-dark: #2a2520;
+            --stone-medium: #3d3530;
+            --stone-light: #574e45;
+            --parchment: #e8d5b7;
+            --parchment-dark: #c9b99a;
+            --gold-ancient: #c9a961;
+            --gold-bright: #f4d58d;
+            --potion-green: #4a8559;
+            --potion-glow: #6ba882;
+            --mystical-purple: #6b4984;
+            --night-sky: #1a1515;
+            --star-glow: #ffe4b5;
+            --seal-red: #8b3a3a;
+            
+            /* Efeitos */
+            --shadow-deep: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --shadow-glow: 0 0 20px rgba(201, 169, 97, 0.3);
+            --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: 'IM Fell English', serif;
+            background: linear-gradient(to bottom, var(--night-sky) 0%, var(--stone-dark) 100%);
+            color: var(--parchment);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ==================== BACKGROUND ANIMADO ==================== */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--star-glow);
+            border-radius: 50%;
+            animation: twinkle 3s infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
+
+        /* ==================== CONTAINER PRINCIPAL ==================== */
+        .tower-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ==================== HEADER ==================== */
+        .tower-header {
+            text-align: center;
+            padding: 40px 20px;
+            border-bottom: 2px solid var(--gold-ancient);
+            margin-bottom: 40px;
+            background: linear-gradient(to bottom, rgba(42, 37, 32, 0.8), transparent);
+        }
+
+        .tower-title {
+            font-family: 'Uncial Antiqua', cursive;
+            font-size: clamp(2rem, 5vw, 4rem);
+            color: var(--gold-bright);
+            text-shadow: 0 0 20px rgba(244, 213, 141, 0.5),
+                         0 4px 8px rgba(0, 0, 0, 0.8);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .tower-subtitle {
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            color: var(--parchment-dark);
+            font-style: italic;
+        }
+
+        /* ==================== LAYOUT PRINCIPAL ==================== */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            margin-bottom: 60px;
+        }
+
+        @media (min-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 350px 1fr;
+            }
+        }
+
+        /* ==================== AMPULHETA CENTRAL ==================== */
+        .hourglass-section {
+            background: linear-gradient(135deg, var(--stone-medium), var(--stone-dark));
+            border: 3px solid var(--gold-ancient);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow-deep), inset 0 0 40px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hourglass-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(201, 169, 97, 0.1) 0%, transparent 70%);
+            animation: mystic-pulse 4s infinite ease-in-out;
+        }
+
+        @keyframes mystic-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .hourglass-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: var(--gold-bright);
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hourglass-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hourglass {
+            position: relative;
+            width: 120px;
+            height: 180px;
+        }
+
+        .hourglass-top,
+        .hourglass-bottom {
+            position: absolute;
+            width: 100%;
+            height: 45%;
+            border: 4px solid var(--gold-ancient);
+            background: rgba(42, 37, 32, 0.4);
+        }
+
+        .hourglass-top {
+            top: 0;
+            border-radius: 50% 50% 0 0;
+            border-bottom: none;
+            overflow: hidden;
+        }
+
+        .hourglass-bottom {
+            bottom: 0;
+            border-radius: 0 0 50% 50%;
+            border-top: none;
+            overflow: hidden;
+        }
+
+        .hourglass-middle {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 10%;
+            background: var(--gold-ancient);
+            clip-path: polygon(0% 0%, 100% 0%, 80% 100%, 20% 100%);
+        }
+
+        .sand-top,
+        .sand-bottom {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            background: var(--gold-bright);
+            box-shadow: 0 0 10px rgba(244, 213, 141, 0.6);
+        }
+
+        .sand-top {
+            bottom: 0;
+            height: 0%;
+            border-radius: 50% 50% 0 0;
+        }
+
+        .sand-bottom {
+            bottom: 0;
+            height: 0%;
+            border-radius: 0 0 50% 50%;
+        }
+
+        .hourglass.active .sand-top {
+            animation: sand-fall-top 60s linear infinite;
+        }
+
+        .hourglass.active .sand-bottom {
+            animation: sand-fall-bottom 60s linear infinite;
+        }
+
+        @keyframes sand-fall-top {
+            from { height: 80%; }
+            to { height: 0%; }
+        }
+
+        @keyframes sand-fall-bottom {
+            from { height: 0%; }
+            to { height: 80%; }
+        }
+
+        .timer-display {
+            text-align: center;
+            margin-top: 30px;
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            color: var(--gold-bright);
+            font-family: 'Cinzel', serif;
+            text-shadow: 0 0 10px rgba(244, 213, 141, 0.5);
+        }
+
+        .active-task-info {
+            text-align: center;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(74, 133, 89, 0.2);
+            border-radius: 10px;
+            border: 1px solid var(--potion-green);
+            font-size: 0.95rem;
+            color: var(--potion-glow);
+        }
+
+        .timer-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .timer-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--potion-green), var(--potion-glow));
+            color: white;
+            border: 2px solid var(--gold-ancient);
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 0.9rem;
+            transition: var(--transition-smooth);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .timer-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6), var(--shadow-glow);
+        }
+
+        .timer-btn:active {
+            transform: translateY(0);
+        }
+
+        /* ==================== FORMULÁRIO DE NOVA TAREFA ==================== */
+        .add-task-section {
+            background: linear-gradient(135deg, var(--stone-light), var(--stone-medium));
+            border: 3px solid var(--gold-ancient);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow-deep);
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--gold-bright);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .task-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-family: 'Cinzel', serif;
+            color: var(--gold-ancient);
+            font-size: 1rem;
+        }
+
+        .form-input,
+        .form-textarea {
+            background: rgba(232, 213, 183, 0.1);
+            border: 2px solid var(--parchment-dark);
+            border-radius: 8px;
+            padding: 12px 15px;
+            color: var(--parchment);
+            font-family: 'IM Fell English', serif;
+            font-size: 1rem;
+            transition: var(--transition-smooth);
+        }
+
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--gold-bright);
+            box-shadow: 0 0 15px rgba(244, 213, 141, 0.3);
+            background: rgba(232, 213, 183, 0.15);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .add-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, var(--mystical-purple), var(--potion-green));
+            color: white;
+            border: 2px solid var(--gold-ancient);
+            border-radius: 10px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: var(--transition-smooth);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+            margin-top: 10px;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7), var(--shadow-glow);
+        }
+
+        /* ==================== LISTA DE CODEX (TAREFAS) ==================== */
+        .codex-library {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+
+        @media (min-width: 768px) {
+            .codex-library {
+                grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            }
+        }
+
+        .codex {
+            background: linear-gradient(135deg, var(--parchment-dark), var(--parchment));
+            border: 4px solid var(--stone-medium);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: var(--shadow-deep);
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .codex::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><text x="10" y="30" font-family="serif" font-size="80" fill="rgba(139,58,58,0.03)">⚗</text></svg>');
+            background-size: 120px;
+            background-position: right bottom;
+            background-repeat: no-repeat;
+            pointer-events: none;
+        }
+
+        .codex:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7), var(--shadow-glow);
+        }
+
+        .codex.completed {
+            background: linear-gradient(135deg, var(--stone-light), var(--stone-medium));
+            border-color: var(--seal-red);
+            opacity: 0.8;
+        }
+
+        .codex.completed::after {
+            content: '✓';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 50px;
+            height: 50px;
+            background: var(--seal-red);
+            color: var(--gold-bright);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(139, 58, 58, 0.6);
+        }
+
+        .codex-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .codex-title {
+            font-family: 'Uncial Antiqua', cursive;
+            font-size: 1.5rem;
+            color: var(--stone-dark);
+            margin-bottom: 5px;
+            flex: 1;
+        }
+
+        .codex.completed .codex-title {
+            color: var(--parchment-dark);
+            text-decoration: line-through;
+        }
+
+        .codex-checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: var(--potion-green);
+            transform: scale(1.3);
+        }
+
+        .codex-description {
+            color: var(--stone-medium);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .codex.completed .codex-description {
+            color: var(--stone-light);
+        }
+
+        .codex-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .codex-btn {
+            padding: 8px 16px;
+            background: var(--stone-dark);
+            color: var(--gold-bright);
+            border: 2px solid var(--gold-ancient);
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 0.85rem;
+            transition: var(--transition-smooth);
+            flex: 1;
+            min-width: 100px;
+        }
+
+        .codex-btn:hover {
+            background: var(--gold-ancient);
+            color: var(--stone-dark);
+            transform: translateY(-2px);
+        }
+
+        .codex-btn.start-timer {
+            background: linear-gradient(135deg, var(--potion-green), var(--potion-glow));
+            color: white;
+        }
+
+        .codex-btn.start-timer:hover {
+            background: linear-gradient(135deg, var(--potion-glow), var(--potion-green));
+        }
+
+        .codex-btn.delete {
+            background: var(--seal-red);
+            color: white;
+        }
+
+        .codex-btn.delete:hover {
+            background: #a04545;
+        }
+
+        .codex-timer-info {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(74, 133, 89, 0.15);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            color: var(--potion-green);
+            text-align: center;
+        }
+
+        /* ==================== EMPTY STATE ==================== */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--parchment-dark);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state-text {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            font-style: italic;
+        }
+
+        /* ==================== RESPONSIVIDADE ==================== */
+        @media (max-width: 768px) {
+            .tower-container {
+                padding: 10px;
+            }
+
+            .tower-header {
+                padding: 20px 10px;
+            }
+
+            .main-layout {
+                gap: 20px;
+            }
+
+            .hourglass {
+                width: 90px;
+                height: 140px;
+            }
+
+            .add-task-section,
+            .hourglass-section {
+                padding: 20px;
+            }
+
+            .codex {
+                padding: 20px;
+            }
+        }
+
+        /* ==================== ANIMAÇÕES ADICIONAIS ==================== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .codex {
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* ==================== SCROLLBAR CUSTOMIZADA ==================== */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--stone-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold-ancient);
+            border-radius: 6px;
+            border: 2px solid var(--stone-dark);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold-bright);
+        }
+    </style>
 </head>
 <body>
+    <!-- Estrelas animadas no fundo -->
+    <div class="stars" id="stars"></div>
+
     <div class="tower-container">
-        <!-- Ampulheta central com timer -->
-        <div class="hourglass-container" aria-label="Ampulheta central para timer de tarefas">
-            <div class="hourglass">
-                <div class="top"></div>
-                <div class="bottom"></div>
-                <div class="sand sand-top"></div>
-                <div class="sand sand-bottom"></div>
-            </div>
-            <div class="timer-display" id="timerDisplay">00:00</div>
+        <!-- Header -->
+        <header class="tower-header">
+            <h1 class="tower-title">⚗ Torre do Alquimista ⚗</h1>
+            <p class="tower-subtitle">Registro de Experimentos e Tarefas Místicas</p>
+        </header>
+
+        <!-- Layout Principal -->
+        <div class="main-layout">
+            <!-- Seção da Ampulheta -->
+            <aside class="hourglass-section">
+                <h2 class="hourglass-title">⧖ Ampulheta do Tempo ⧖</h2>
+                
+                <div class="hourglass-container">
+                    <div class="hourglass" id="hourglass">
+                        <div class="hourglass-top">
+                            <div class="sand-top"></div>
+                        </div>
+                        <div class="hourglass-middle"></div>
+                        <div class="hourglass-bottom">
+                            <div class="sand-bottom"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timer-display" id="timerDisplay">00:00:00</div>
+                
+                <div id="activeTaskInfo" style="display: none;" class="active-task-info">
+                    <strong>Tarefa Ativa:</strong>
+                    <div id="activeTaskName"></div>
+                </div>
+
+                <div class="timer-controls">
+                    <button class="timer-btn" id="pauseBtn" style="display: none;">⏸ Pausar</button>
+                    <button class="timer-btn" id="resetBtn" style="display: none;">↻ Resetar</button>
+                </div>
+            </aside>
+
+            <!-- Conteúdo Principal -->
+            <main>
+                <!-- Formulário de Nova Tarefa -->
+                <section class="add-task-section">
+                    <h2 class="section-title">✒ Novo Codex de Tarefa ✒</h2>
+                    
+                    <form class="task-form" id="taskForm">
+                        <div class="form-group">
+                            <label class="form-label" for="taskTitle">Título do Experimento:</label>
+                            <input 
+                                type="text" 
+                                class="form-input" 
+                                id="taskTitle" 
+                                placeholder="Ex: Transmutação de Metais Comuns"
+                                required
+                            >
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="taskDescription">Descrição Detalhada:</label>
+                            <textarea 
+                                class="form-textarea" 
+                                id="taskDescription" 
+                                placeholder="Descreva os passos e ingredientes necessários..."
+                                required
+                            ></textarea>
+                        </div>
+                        
+                        <button type="submit" class="add-btn">📜 Adicionar à Biblioteca</button>
+                    </form>
+                </section>
+
+                <!-- Biblioteca de Codex (Lista de Tarefas) -->
+                <section>
+                    <h2 class="section-title">📚 Biblioteca de Codex 📚</h2>
+                    <div class="codex-library" id="codexLibrary">
+                        <!-- Tarefas serão inseridas aqui via JavaScript -->
+                    </div>
+                </section>
+            </main>
         </div>
-
-        <!-- Formulário para adicionar nova tarefa -->
-        <form id="addTaskForm" class="add-task-form" aria-label="Formulário para adicionar nova tarefa">
-            <input type="text" id="taskTitle" placeholder="Título do Codex" required aria-label="Título da tarefa">
-            <textarea id="taskDescription" placeholder="Descrição Alquímica" required aria-label="Descrição da tarefa"></textarea>
-            <button type="submit">Adicionar Codex</button>
-        </form>
-
-        <!-- Lista de tarefas (codex) -->
-        <ul id="taskList" class="task-list" aria-label="Lista de tarefas representadas como codex"></ul>
     </div>
 
-    <!-- Áudio opcional para som de areia caindo (use um arquivo MP3 gratuito ou placeholder) -->
-    <audio id="sandSound" loop>
-        <source src="sand_falling.mp3" type="audio/mpeg">
-        Seu navegador não suporta áudio.
-    </audio>
+    <script>
+        // ==================== CLASSE DE GERENCIAMENTO DE TAREFAS ====================
+        class AlchemistTodoApp {
+            constructor() {
+                this.tasks = this.loadTasks();
+                this.timerInterval = null;
+                this.activeTaskId = null;
+                this.elapsedSeconds = 0;
+                
+                this.init();
+                this.createStars();
+            }
 
-    <script src="script.js"></script>
+            init() {
+                // Event Listeners
+                document.getElementById('taskForm').addEventListener('submit', (e) => this.addTask(e));
+                document.getElementById('pauseBtn').addEventListener('click', () => this.pauseTimer());
+                document.getElementById('resetBtn').addEventListener('click', () => this.resetTimer());
+                
+                // Renderizar tarefas existentes
+                this.renderTasks();
+            }
+
+            // ==================== GERENCIAMENTO DE TAREFAS ====================
+            addTask(e) {
+                e.preventDefault();
+                
+                const title = document.getElementById('taskTitle').value.trim();
+                const description = document.getElementById('taskDescription').value.trim();
+                
+                if (!title || !description) return;
+                
+                const task = {
+                    id: Date.now().toString(),
+                    title,
+                    description,
+                    completed: false,
+                    totalTime: 0, // em segundos
+                    createdAt: new Date().toISOString()
+                };
+                
+                this.tasks.push(task);
+                this.saveTasks();
+                this.renderTasks();
+                
+                // Limpar formulário
+                document.getElementById('taskForm').reset();
+                
+                // Scroll suave para a nova tarefa
+                setTimeout(() => {
+                    const newTask = document.querySelector(`[data-task-id="${task.id}"]`);
+                    if (newTask) {
+                        newTask.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 100);
+            }
+
+            deleteTask(taskId) {
+                if (!confirm('Deseja realmente apagar este codex?')) return;
+                
+                // Parar timer se a tarefa ativa está sendo deletada
+                if (this.activeTaskId === taskId) {
+                    this.stopTimer();
+                }
+                
+                this.tasks = this.tasks.filter(task => task.id !== taskId);
+                this.saveTasks();
+                this.renderTasks();
+            }
+
+            toggleComplete(taskId) {
+                const task = this.tasks.find(t => t.id === taskId);
+                if (task) {
+                    task.completed = !task.completed;
+                    
+                    // Parar timer se marcar como completa
+                    if (task.completed && this.activeTaskId === taskId) {
+                        this.stopTimer();
+                    }
+                    
+                    this.saveTasks();
+                    this.renderTasks();
+                }
+            }
+
+            editTask(taskId) {
+                const task = this.tasks.find(t => t.id === taskId);
+                if (!task) return;
+                
+                const newTitle = prompt('Novo título:', task.title);
+                if (newTitle && newTitle.trim()) {
+                    task.title = newTitle.trim();
+                }
+                
+                const newDescription = prompt('Nova descrição:', task.description);
+                if (newDescription && newDescription.trim()) {
+                    task.description = newDescription.trim();
+                }
+                
+                this.saveTasks();
+                this.renderTasks();
+            }
+
+            // ==================== TIMER ====================
+            startTimer(taskId) {
+                const task = this.tasks.find(t => t.id === taskId);
+                if (!task || task.completed) return;
+                
+                // Parar timer anterior se existir
+                if (this.timerInterval) {
+                    this.pauseTimer();
+                }
+                
+                this.activeTaskId = taskId;
+                this.elapsedSeconds = 0;
+                
+                // Atualizar UI
+                document.getElementById('hourglass').classList.add('active');
+                document.getElementById('activeTaskInfo').style.display = 'block';
+                document.getElementById('activeTaskName').textContent = task.title;
+                document.getElementById('pauseBtn').style.display = 'inline-block';
+                document.getElementById('resetBtn').style.display = 'inline-block';
+                
+                // Iniciar contagem
+                this.timerInterval = setInterval(() => {
+                    this.elapsedSeconds++;
+                    task.totalTime++;
+                    this.updateTimerDisplay();
+                    this.saveTasks();
+                }, 1000);
+                
+                this.renderTasks();
+            }
+
+            pauseTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                    document.getElementById('hourglass').classList.remove('active');
+                    document.getElementById('pauseBtn').textContent = '▶ Retomar';
+                    
+                    // Alternar entre pausar e retomar
+                    const pauseBtn = document.getElementById('pauseBtn');
+                    pauseBtn.onclick = () => this.resumeTimer();
+                }
+            }
+
+            resumeTimer() {
+                if (this.activeTaskId) {
+                    const task = this.tasks.find(t => t.id === this.activeTaskId);
+                    if (task) {
+                        document.getElementById('hourglass').classList.add('active');
+                        document.getElementById('pauseBtn').textContent = '⏸ Pausar';
+                        
+                        this.timerInterval = setInterval(() => {
+                            this.elapsedSeconds++;
+                            task.totalTime++;
+                            this.updateTimerDisplay();
+                            this.saveTasks();
+                        }, 1000);
+                        
+                        const pauseBtn = document.getElementById('pauseBtn');
+                        pauseBtn.onclick = () => this.pauseTimer();
+                    }
+                }
+            }
+
+            stopTimer() {
+                if (this.timerInterval) {
+                    clearInterval(this.timerInterval);
+                    this.timerInterval = null;
+                }
+                
+                this.activeTaskId = null;
+                this.elapsedSeconds = 0;
+                
+                document.getElementById('hourglass').classList.remove('active');
+                document.getElementById('activeTaskInfo').style.display = 'none';
+                document.getElementById('pauseBtn').style.display = 'none';
+                document.getElementById('resetBtn').style.display = 'none';
+                document.getElementById('timerDisplay').textContent = '00:00:00';
+                
+                this.renderTasks();
+            }
+
+            resetTimer() {
+                if (!confirm('Resetar o timer e perder o progresso atual?')) return;
+                
+                if (this.activeTaskId) {
+                    const task = this.tasks.find(t => t.id === this.activeTaskId);
+                    if (task) {
+                        task.totalTime -= this.elapsedSeconds;
+                        if (task.totalTime < 0) task.totalTime = 0;
+                        this.saveTasks();
+                    }
+                }
+                
+                this.stopTimer();
+            }
+
+            updateTimerDisplay() {
+                const hours = Math.floor(this.elapsedSeconds / 3600);
+                const minutes = Math.floor((this.elapsedSeconds % 3600) / 60);
+                const seconds = this.elapsedSeconds % 60;
+                
+                const display = [hours, minutes, seconds]
+                    .map(num => num.toString().padStart(2, '0'))
+                    .join(':');
+                
+                document.getElementById('timerDisplay').textContent = display;
+            }
+
+            formatTime(totalSeconds) {
+                const hours = Math.floor(totalSeconds / 3600);
+                const minutes = Math.floor((totalSeconds % 3600) / 60);
+                const seconds = totalSeconds % 60;
+                
+                if (hours > 0) {
+                    return `${hours}h ${minutes}m`;
+                } else if (minutes > 0) {
+                    return `${minutes}m ${seconds}s`;
+                } else {
+                    return `${seconds}s`;
+                }
+            }
+
+            // ==================== RENDERIZAÇÃO ====================
+            renderTasks() {
+                const library = document.getElementById('codexLibrary');
+                
+                if (this.tasks.length === 0) {
+                    library.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-state-icon">📖</div>
+                            <p class="empty-state-text">A biblioteca está vazia. Adicione seu primeiro codex acima.</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                library.innerHTML = this.tasks.map(task => `
+                    <div class="codex ${task.completed ? 'completed' : ''}" data-task-id="${task.id}">
+                        <div class="codex-header">
+                            <h3 class="codex-title">${this.escapeHtml(task.title)}</h3>
+                            <input 
+                                type="checkbox" 
+                                class="codex-checkbox" 
+                                ${task.completed ? 'checked' : ''}
+                                onchange="app.toggleComplete('${task.id}')"
+                                title="Marcar como ${task.completed ? 'pendente' : 'concluída'}"
+                            >
+                        </div>
+                        
+                        <p class="codex-description">${this.escapeHtml(task.description)}</p>
+                        
+                        ${task.totalTime > 0 ? `
+                            <div class="codex-timer-info">
+                                ⧗ Tempo dedicado: ${this.formatTime(task.totalTime)}
+                            </div>
+                        ` : ''}
+                        
+                        <div class="codex-actions">
+                            ${!task.completed ? `
+                                <button class="codex-btn start-timer" onclick="app.startTimer('${task.id}')">
+                                    ${this.activeTaskId === task.id ? '⏱ Em progresso' : '⏱ Iniciar Timer'}
+                                </button>
+                            ` : ''}
+                            <button class="codex-btn" onclick="app.editTask('${task.id}')">✎ Editar</button>
+                            <button class="codex-btn delete" onclick="app.deleteTask('${task.id}')">🗑 Apagar</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // ==================== PERSISTÊNCIA ====================
+            saveTasks() {
+                localStorage.setItem('alchemistTasks', JSON.stringify(this.tasks));
+            }
+
+            loadTasks() {
+                const saved = localStorage.getItem('alchemistTasks');
+                return saved ? JSON.parse(saved) : [];
+            }
+
+            // ==================== UTILIDADES ====================
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            createStars() {
+                const starsContainer = document.getElementById('stars');
+                const starCount = 100;
+                
+                for (let i = 0; i < starCount; i++) {
+                    const star = document.createElement('div');
+                    star.className = 'star';
+                    star.style.left = `${Math.random() * 100}%`;
+                    star.style.top = `${Math.random() * 100}%`;
+                    star.style.animationDelay = `${Math.random() * 3}s`;
+                    star.style.animationDuration = `${2 + Math.random() * 3}s`;
+                    starsContainer.appendChild(star);
+                }
+            }
+        }
+
+        // ==================== INICIALIZAÇÃO ====================
+        let app;
+        document.addEventListener('DOMContentLoaded', () => {
+            app = new AlchemistTodoApp();
+        });
+    </script>
 </body>
 </html>
