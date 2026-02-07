@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Torre do Alquimista - To-Do List</title>
+    <!-- Link para fonte antiga via Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Uncial+Antiqua&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="tower-container">
+        <!-- Ampulheta central com timer -->
+        <div class="hourglass-container" aria-label="Ampulheta central para timer de tarefas">
+            <div class="hourglass">
+                <div class="top"></div>
+                <div class="bottom"></div>
+                <div class="sand sand-top"></div>
+                <div class="sand sand-bottom"></div>
+            </div>
+            <div class="timer-display" id="timerDisplay">00:00</div>
+        </div>
+
+        <!-- Formulário para adicionar nova tarefa -->
+        <form id="addTaskForm" class="add-task-form" aria-label="Formulário para adicionar nova tarefa">
+            <input type="text" id="taskTitle" placeholder="Título do Codex" required aria-label="Título da tarefa">
+            <textarea id="taskDescription" placeholder="Descrição Alquímica" required aria-label="Descrição da tarefa"></textarea>
+            <button type="submit">Adicionar Codex</button>
+        </form>
+
+        <!-- Lista de tarefas (codex) -->
+        <ul id="taskList" class="task-list" aria-label="Lista de tarefas representadas como codex"></ul>
+    </div>
+
+    <!-- Áudio opcional para som de areia caindo (use um arquivo MP3 gratuito ou placeholder) -->
+    <audio id="sandSound" loop>
+        <source src="sand_falling.mp3" type="audio/mpeg">
+        Seu navegador não suporta áudio.
+    </audio>
+
+    <script src="script.js"></script>
+</body>
+</html>
